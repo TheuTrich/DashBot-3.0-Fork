@@ -69,23 +69,16 @@ bool isDead = false;
 Mode toMode(uint32_t hi, uint32_t lo) {
     isDead = hi & 0x1000000;
     hi &= 0xFFFF;
-
     if (hi == 0) {
-        switch (lo) {
-            case 0x0:         return Mode::cube;
-            case 0x1:         return Mode::ship;
-            case 0x100:       return Mode::ufo;
-            case 0x10000:     return Mode::ball;
-            case 0x1000000:   return Mode::wave;
-            default:          return Mode::unknown;
-        }	
-    }
-
-    switch (hi) {
-        case 0x1:     return Mode::robot;
-        case 0x100:   return Mode::spider;
-        default:      return Mode::unknown;
-    }
+        if (lo == 0) return Mode::cube;
+        else if (lo == 0x1) return Mode::ship;
+        else if (lo == 0x100) return Mode::ufo;
+        else if (lo == 0x10000) return Mode::ball;
+        else if (lo == 0x1000000) return Mode::wave;
+        else return Mode::unknown;
+    } else if (hi == 0x1) return Mode::robot;
+    else if (hi == 0x100) return Mode::spider;
+    else return Mode::unknown;
 }
 
 const std::unordered_map<std::string, double> oddsForAllMaps = {
@@ -132,8 +125,6 @@ void jump(const HackIH& GD, HWND window, bool state) {
         GD.Write<bool>({GD.BaseAddress, 0x3222D0, 0x164, 0x228, 0x612}, state);
         if (!state) GD.Write<bool>({GD.BaseAddress, 0x3222D0, 0x164, 0x228, 0x641}, state);
     }*/
-	
-	//std::cout << "press=" << state << std::endl;
     if (state) PostMessage(window, WM_LBUTTONDOWN, MK_LBUTTON, 0);
     else PostMessage(window, WM_LBUTTONUP, 0, 0);
     Sleep(75);
@@ -154,7 +145,6 @@ void saveLevel(const char * argv[]) {
         // Rewrite the file if it gets corrupted
         if (pos < sizeof(double) * 2 + strlen(argv[1]) + 1 + bestJumps.size() * 4 + 4) loop = true;
     } while (loop);
-	std::cout << "Data saved\n";
 }
 
 int main(int argc, const char * argv[]) {
@@ -176,7 +166,7 @@ int main(int argc, const char * argv[]) {
             return 1;
         }
     }
-    std::cout << "\033[0;32mDashBot Fork v1.0\nBased on Pizzabot-v4 by Pizzaroot\n\033[0m";
+    std::cout << "DashBot v3.2\nBased on Pizzabot-v4 by Pizzaroot\n";
     if (argc > 2) {
         saving = true;
         // file format:
@@ -197,7 +187,7 @@ int main(int argc, const char * argv[]) {
                 bestJumps.push_back(n);
             }
             in.close();
-        } else std::cerr << "\033[1;33mCould not open input file, ignore this if you're creating a new save.\033[0m\n";
+        } else std::cerr << "Could not open input file, ignore this if you're creating a new save.\n";
     }
     if (argc > 3) {
         FPS = std::stoi(argv[3]);
@@ -205,8 +195,6 @@ int main(int argc, const char * argv[]) {
     std::default_random_engine rng(std::chrono::system_clock::now().time_since_epoch().count());
     HackIH GD;
     GD.bind("GeometryDash.exe");
-	
-	std::cout << std::hex << GD.BaseAddress << std::endl; 
     //std::list<uint32_t> jumps;
     std::list<uint32_t> newJumps;
     std::list<uint32_t>::iterator nextJump = bestJumps.begin();
@@ -219,7 +207,7 @@ int main(int argc, const char * argv[]) {
     int attempt = 0;
     HWND window = FindWindow(NULL, "Geometry Dash");
     if (window == NULL) {
-        std::cerr << "\033[0;31mCould not find Geometry Dash window.\033[0m\n";
+        std::cerr << "Could not find Geometry Dash window.\n";
         return 3;
     }
     /* === desync debugging === //
@@ -262,22 +250,12 @@ int main(int argc, const char * argv[]) {
                 if (isDown) {
                     jump(GD, window, false);
                     isDown = false;
-                } else {
-					jump(GD, window, true);
-					isDown = true;
-				}
+                }
             }
         //}
         bool canJump = GD.Read<uint8_t>({GD.BaseAddress, 0x3222D0, 0x164, 0x224, 0x640}) || GD.Read<uint8_t>({GD.BaseAddress, 0x3222D0, 0x164, 0x224, 0x66C, 0x20, 0});
         uint32_t percentage_int = GD.Read<uint32_t>({ GD.BaseAddress , 0x3222D0 , 0x164, 0x3C0, 0x12C });
-		
-        char percentage[4] = {
-			static_cast<char>(percentage_int & 0xFF),
-			static_cast<char>((percentage_int >> 8) & 0xFF),
-			static_cast<char>((percentage_int >> 16) & 0xFF),
-			static_cast<char>((percentage_int >> 24) & 0xFF)
-			};
-		
+        char percentage[4] = {percentage_int & 0xFF, (percentage_int >> 8) & 0xFF, (percentage_int >> 16) & 0xFF, (percentage_int >> 24) & 0xFF};
         if (percentage[0] == '1' && percentage[1] == '0' && percentage[2] == '0' && percentage[3] == '%') {
             std::cout << "level complete! saving and exiting\n";
             for (uint32_t j : newJumps) bestJumps.push_back(j);
@@ -370,7 +348,7 @@ regress:
                     std::cout << "global offset is now at " << globalOffset << "\n";
                     // don't try to adjust for the next 10 attempts
                     lastDeathPositions.push_back(0);
-                    lastDeathPositions.pop_front();
+                    lastDeathPositions.pop_front();* /
                 }*/
             } else {
                 std::cout << (MAX_ATTEMPTS - failCount) << " tries until regression)\n";
@@ -389,7 +367,7 @@ regress:
                 keybd_event(VK_ESCAPE, 0x01, 0, NULL);
                 Sleep(50);
                 keybd_event(VK_ESCAPE, 0x01, KEYEVENTF_KEYUP, NULL);
-                Sleep(3000);
+                Sleep(1500);
                 keybd_event(VK_SPACE, 0x1c, 0, NULL);
                 Sleep(50);
                 keybd_event(VK_SPACE, 0x1c, KEYEVENTF_KEYUP, NULL);
@@ -419,11 +397,10 @@ regress:
         if (shouldJump) {
             if (randing) {
                 newJumps.push_back(xPos);
-                std::cout << "\033[0;36mClicking!\033[0m";
-            } else std::cout << "\033[0;37mClicking\033[0m";
-            std::cout << (modeFlying[(int)mode] || isDown ? (isDown ? " \033[1;30moff\033[0m " : " on  ") : " ") << "(" << xPos << ")\n";
+                std::cout << "clicking!";
+            } else std::cout << "clicking";
+            std::cout << (modeFlying[(int)mode] || isDown ? (isDown ? " off " : " on  ") : " ") << "(" << xPos << ")\n";
             lastJump = xPos;
-			
             if (modeFlying[(int)mode] || isDown) {
                 isDown = !isDown;
                 jump(GD, window, isDown);
