@@ -1,6 +1,5 @@
-# Another fork?
-Yes, this is a fork of the DashBot 3.0 by MCJack123. Mainly is to fix some of the bugs I found and renew the Read Me page. It still working in progress, change will happen soon.
-Note: Bellow might be outdated, I will change this soon.
+# Non edited version
+I make this branch just to reserve if something goes wrong on the original side.
 
 # DashBot 3.0
 Geometry Dash bot to play &amp; finish levels - Now training much faster!
