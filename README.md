@@ -2,40 +2,43 @@
 Yes, this is a fork of the DashBot 3.0 by MCJack123. Mainly is to fix some of the bugs I found and renew the Read Me page. It still working in progress, change will happen soon.
 Note: Bellow might be outdated, I will change this soon.
 
-# DashBot 3.0
+# DashBot 3.0 Fork
 Geometry Dash bot to play &amp; finish levels - Now training much faster!
 
 ## How it works
-DashBot 3.0 uses a very simplified version of a genetic algorithm, which uses random evolution to slowly create better generations for future species to evolve over. DashBot 2.0 used a full genetic algorithm (with generations and species), but DashBot 3.0 removes the species concept and defines a new generation as one that is better than the last. This means that overall training runs much faster than 2.0, but it may take a while if the bot gets stuck somewhere, especially near the end.
+DashBot 3.0 Fork's concept are the same as the original but with bugs fix and adding some quality of life features. Currently I will aim to fix and optimize the script and try to fix everything that are on the Isuse tab on the original repository.
 
-Basically, the bot first follows a list of jumps that have been saved and are confirmed to work. (More about this later.) After it does all of the jumps, it starts to randomly click. If these new clicks help it go further through the level then it saves the new clicks, and those are now used for the jump list.
+Here are what I know about this script. The DashBot 3.0 is using a simplified version of genetic algorithm that randomly and slowly create better generations.
 
-Note that the screen is not used as an input at all - the bot plays blind. The only inputs it uses are the current X position, the mode of the player, and whether the level was finished.
+The bot will look into the save file and follow the list of jumps that have been saved. After do all the jumps, it will perform random click to help it go futher. If the new click help it go further, it will then be saved  to the list, or will be removed if it can't go pass that after around 20 attempts. This will allow the bot to explore a better way to go futher into the level.
 
-If the bot can't get further after trying random jumps for 10 attempts, it will delete the last jump in the list. To allow the possibility of multiple jump reversions, it will only save the new jumps if it passes the point it got stuck at. If it still can't get un-stuck, it continues reverting until it can make progress. This is what makes this bot able to learn and be self-correcting.
+The bot can't see the screen of the game, it play blind, the only thing it know is the position of itself, most of the time is X position, the current player's mode(Ship, Ball, UFO, etc).
 
-For cube, ball, UFO, and spider sections, the stored clicks tell the program to click down & up. For ship, wave, and robot sections, the stored clicks tell the program to toggle the mouse, allowing the bot to hold the mouse button down. This is why the mode string argument is required for the bot to run properly.
+For 'flying' type mode(Ship, Wave, Robot, etc) the stored click will be act as hold and unhold click.
 
 ## Videos
+**I will update soon**
 [![Teaching my new bot how to play Geometry Dash](https://img.youtube.com/vi/zr5mRVt-b2s/0.jpg)](https://www.youtube.com/watch?v=zr5mRVt-b2s)  
 [Twitch Highlight of moment Stereo Madness was finished](https://www.twitch.tv/videos/581659084)
 [YouTube playlist of the bot's progress](https://www.youtube.com/playlist?list=PLkpRr6F2XV5408ZFj1Hm-Phf2G9MymztX)
 
-## Anti-virus note
-DashBot uses functions to read the memory of the Geometry Dash process. Some viruses take advantage of these same functions, so many anti-virus programs will flag programs that use those as malware. If your browser refuses to download the executables, you can try either downloading with a different browser (e.g. IE), or compile the code yourself.
+## Anti virus note
+As the bot read the memory of a software, here is Geometry Dash. Anti virus softwares will flag the bot as a threath or a malware, which might make the browser refuse to download the executable version. You can try different browser or compile the code yourself.
 
 ## Compiling
-This program only works on Windows. Mac & Linux support may be available in the future.
+The bot currently only works on Windows. **I'm sorry for Mac and Linux users, who can't use this bot as I don't know how the address and memory works on these OSes.**
 
-You will need a C++ compiler to build. I suggest Visual Studio, though MinGW or other G++ ports may work. To compile with VS:
-1. Open a new **x86** Native Tools command prompt. This is available in the Start Menu in the "Visual Studio \<year\>" folder.
-2. `cd` to the folder with the files.
-3. Compile
-  * For DashBot: `cl /Fedashbot.exe dashbot.cpp HAPIH.cpp /linkuser32.lib`
-  * For DashBot Player: `cl /Fedashbot_player.exe dashbot_player.cpp HAPIH.cpp /linkuser32.lib`
-  * For `mkdbj` (level creator of sorts): `cl /Femkdbj.exe mkdbj.cpp`
+You need a C++ Compiler to compile the script to executable. Different compiler might required a different way to compile or might not work at all. For Visual Studio:
+1. Open a **x86** Native Tools command prompt. You can find this in the Start Menu after you installed Visual Studio.
+2. Change the working directory to the dashbot folder by using 'cd'.
+3. Compile the script:
+* For dashbot.exe: `cl /Fedashbot.exe dashbot.cpp HAPIH.cpp /link user32.lib`
+* The bellow isn't working yet.
+* For DashBot Player: `cl /Fedashbot_player.exe dashbot_player.cpp HAPIH.cpp /linkuser32.lib`
+* For `mkdbj` (level creator of sorts): `cl /Femkdbj.exe mkdbj.cpp`
 
 ## Usage
+**Start from this point everything isn't updated yet as I still looking into the script to see how it work before update these later.**
 ### DashBot
 To run DashBot, you need to open it from a console window. First, `cd` to the directory where `dashbot.exe` is located. Make sure  that Geometry Dash is running before starting DashBot. Then run `dashbot <modestr> [save.dbj]`. Finally, start the level in GD and make sure the mouse is on top of the window. You can pause the bot anytime just by pausing Geometry Dash. The bot will not run unless Geometry Dash is playing a level unpaused.
 
